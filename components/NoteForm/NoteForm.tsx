@@ -7,13 +7,13 @@ import { createNote } from '../../services/noteService';
 interface FormValues {
   title: string;
   content: string;
-  tag: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
+  category: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 }
 
 const initialValues: FormValues = {
   title: '',
   content: '',
-  tag: 'Todo',
+  category: 'Todo',
 };
 
 const validationSchema = Yup.object({
@@ -22,7 +22,7 @@ const validationSchema = Yup.object({
     .max(50, 'Must be 50 characters or less')
     .required('Required'),
   content: Yup.string().max(500, 'Must be 500 characters or less'),
-  tag: Yup.string()
+  category: Yup.string()
     .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'])
     .required('Required'),
 });
@@ -46,7 +46,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values, actions) => {
-        mutation.mutate({ ...values, createdAt: new Date().toISOString() });
+        mutation.mutate(values);
         actions.resetForm();
       }}
     >
@@ -74,15 +74,15 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
         </div>
 
         <div className={css.formGroup}>
-          <label htmlFor="tag">Tag</label>
-          <Field as="select" id="tag" name="tag" className={css.select}>
+          <label htmlFor="category">Category</label>
+          <Field as="select" id="category" name="category" className={css.select}>
             <option value="Todo">Todo</option>
             <option value="Work">Work</option>
             <option value="Personal">Personal</option>
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <ErrorMessage name="tag" component="span" className={css.error} />
+          <ErrorMessage name="category" component="span" className={css.error} />
         </div>
 
         <div className={css.actions}>

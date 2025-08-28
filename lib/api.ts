@@ -3,10 +3,16 @@ import axios from 'axios';
 
 export async function fetchNotes(q = '', page = 1) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
+
+  const params: Record<string, string | number> = { page };
+  if (q.trim()) {
+    params.q = q;
+  }
+
   const { data } = await axios.get<NotesResponse>(
     'https://notehub-public.goit.study/api/notes',
     {
-      params: { q: q.toString(), page: Number(page) },
+      params,
       headers: { Authorization: `Bearer ${token}` },
     }
   );

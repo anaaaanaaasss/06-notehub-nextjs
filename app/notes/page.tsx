@@ -3,7 +3,8 @@ import { fetchNotes } from '@/lib/api';
 import NotesClient from './NotesClient';
 
 export default async function NotesPage({ searchParams }: { searchParams: { q?: string; page?: string } }) {
-  const q = searchParams?.q ?? '';
+  const rawQ = searchParams.q?.trim();
+  const q = rawQ && rawQ.length > 0 ? rawQ : '';
   const page = Number(searchParams?.page ?? 1);
 
   const qc = new QueryClient();
