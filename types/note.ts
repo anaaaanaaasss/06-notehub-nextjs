@@ -3,6 +3,7 @@ export interface Note {
   title: string;
   content: string;
   createdAt: string;
+  tag: string;
 }
 export interface NotesResponse {
   notes: Note[];
@@ -13,4 +14,5 @@ export interface NewNote {
   title: string;
   content: string;
   category: string;
+  
 }
