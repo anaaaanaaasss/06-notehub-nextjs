@@ -1,6 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
-import NotesClient from './NotesClient';
+import NotesClient from './Notes.client';
 
 export default async function NotesPage({ searchParams }: { searchParams: { q?: string; page?: string } }) {
   const rawQ = searchParams.q?.trim();
