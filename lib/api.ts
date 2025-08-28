@@ -1,4 +1,4 @@
-import type { Note, NotesResponse } from '@/types/note';
+import type { Note } from '@/types/note';
 import axios from 'axios';
 
 export async function fetchNotes(q = '', page = 1) {
@@ -6,10 +6,10 @@ export async function fetchNotes(q = '', page = 1) {
 
   const params: Record<string, string | number> = { page };
   if (q.trim()) {
-    params.q = q;
+    params.search = q;
   }
 
-  const { data } = await axios.get<NotesResponse>(
+const { data } = await axios.get<{ notes: Note[]; totalPages: number }>(
     'https://notehub-public.goit.study/api/notes',
     {
       params,
@@ -18,7 +18,7 @@ export async function fetchNotes(q = '', page = 1) {
   );
   return data;
 }
-export async function createNote(payload: { title: string; content: string }) {
+export async function createNote(payload: { title: string; content: string; tag: string }) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
   const { data } = await axios.post<Note>(
     'https://notehub-public.goit.study/api/notes',
@@ -29,13 +29,13 @@ export async function createNote(payload: { title: string; content: string }) {
   );
   return data;
 }
-export async function deleteNote(id: number) {
+export async function deleteNote(id: string) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
   await axios.delete(`https://notehub-public.goit.study/api/notes/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 }
-export async function fetchNoteById(id: number) {
+export async function fetchNoteById(id: string) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
   const { data } = await axios.get<Note>(
     `https://notehub-public.goit.study/api/notes/${id}`,

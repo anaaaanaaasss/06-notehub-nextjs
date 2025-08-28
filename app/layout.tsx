@@ -4,13 +4,16 @@ import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
+return (
+  <html lang="en">
+    <body>
+      <TanStackProvider>
         <Header />
-        <TanStackProvider>{children}</TanStackProvider>
+        {children}
         <Footer />
-      </body>
-    </html>
-  );
+      </TanStackProvider>
+      <div id="modal-root" />
+    </body>
+  </html>
+);
 }

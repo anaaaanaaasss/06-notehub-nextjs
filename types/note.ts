@@ -1,18 +1,14 @@
 export interface Note {
-  id: number;
+  id: string; 
   title: string;
   content: string;
+  tag: string; 
   createdAt: string;
-  tag: string;
-}
-export interface NotesResponse {
-  notes: Note[];
-  totalPages: number;
+  updatedAt: string; 
 }
 
 export interface NewNote {
   title: string;
   content: string;
-  category: string;
-  
+  tag: string; 
 }
