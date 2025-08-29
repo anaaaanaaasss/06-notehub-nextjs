@@ -1,14 +1,22 @@
 import Link from 'next/link';
 import css from './NoteList.module.css';
 import type { Note } from '../../types/note';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteNote } from '../../lib/api';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { deleteNote, fetchNotes } from '../../lib/api';
 
 interface NoteListProps {
-  notes: Note[];
+  notes?: Note[];
 }
 
 export default function NoteList({ notes }: NoteListProps) {
+  const { data } = useQuery<{ notes: Note[]; totalPages: number }, unknown, Note[]>({
+    queryKey: ['notes'],
+    queryFn: fetchNotes,
+    enabled: !notes,
+    select: (res) => res.notes,
+  });
+  const list = notes ?? data ?? [];
+
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: deleteNote,
@@ -17,25 +25,31 @@ export default function NoteList({ notes }: NoteListProps) {
     },
   });
 
-  if (!notes.length) return null;
+  if (!list.length) return null;
 
   return (
     <ul className={css.list}>
-      {notes.map(note => (
+      {list.map((note: Note) => (
         <li key={note.id} className={css.listItem}>
-          <Link href={`/notes/${note.id}`}>
-            <h2 className={css.title}>{note.title}</h2>
-            <p className={css.tag}>#{note.tag}</p>
-            <p className={css.content}>{note.content}</p>
+          <div className={css.card}> 
+            <Link href={`/notes/${note.id}`} className={css.link}> 
+              <h2 className={css.title}>{note.title}</h2>
+              <p className={css.tag}>#{note.tag}</p>
+              <p className={css.content}>{note.content}</p>
+            </Link>
             <div className={css.footer}>
               <button
+                type="button"
                 className={css.button}
-                onClick={() => mutation.mutate(note.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  mutation.mutate(note.id);
+                }}
               >
                 Delete
               </button>
             </div>
-          </Link>
+          </div>
         </li>
       ))}
     </ul>
