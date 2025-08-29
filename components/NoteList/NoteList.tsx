@@ -4,16 +4,20 @@ import type { Note } from '../../types/note';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { deleteNote, fetchNotes } from '../../lib/api';
 
+const fetchNotesList = async (): Promise<Note[]> => {
+  const res = await fetchNotes();
+  return res.notes;
+};
+
 interface NoteListProps {
   notes?: Note[];
 }
 
 export default function NoteList({ notes }: NoteListProps) {
-  const { data } = useQuery<{ notes: Note[]; totalPages: number }, unknown, Note[]>({
-    queryKey: ['notes'],
-    queryFn: fetchNotes,
+  const { data } = useQuery<Note[]>({
+    queryKey: ['notes'] as const,
+    queryFn: fetchNotesList,
     enabled: !notes,
-    select: (res) => res.notes,
   });
   const list = notes ?? data ?? [];
 
