@@ -7,15 +7,12 @@ import SearchBox from '../../components/SearchBox/SearchBox';
 import Pagination from '../../components/Pagination/Pagination';
 import Modal from '../../components/Modal/Modal';
 import NoteList from '../../components/NoteList/NoteList';
+import { useDebounce } from 'use-debounce';
 
-export default function NotesClient({
-  initialQuery,
-}: {
-  initialQuery: { q: string; page: number };
-}) {
-  const { q, page } = initialQuery;
-  const [search, setSearch] = useState(q);
-  const [currentPage, setCurrentPage] = useState(page);
+export default function NotesClient() {
+  const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebounce(search, 500);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Ensure modal-root div exists in DOM for portals
@@ -27,9 +24,14 @@ export default function NotesClient({
     }
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['notes', { q: search, page: currentPage }],
-    queryFn: () => fetchNotes(search, currentPage)
+    queryKey: ['notes', { q: debouncedSearch, page: currentPage }],
+    queryFn: () => fetchNotes(debouncedSearch, currentPage),
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;
@@ -46,11 +48,13 @@ export default function NotesClient({
         </Modal>
       )}
       <NoteList notes={data.notes} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={data.totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
-      />
+      {data.totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={data.totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      )}
     </>
   );
 }

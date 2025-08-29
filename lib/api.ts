@@ -31,9 +31,13 @@ export async function createNote(payload: { title: string; content: string; tag:
 }
 export async function deleteNote(id: string) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
-  await axios.delete(`https://notehub-public.goit.study/api/notes/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const { data } = await axios.delete<Note>(
+    `https://notehub-public.goit.study/api/notes/${id}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return data;
 }
 export async function fetchNoteById(id: string) {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN || process.env.NOTEHUB_TOKEN;
