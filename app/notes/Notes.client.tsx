@@ -36,11 +36,15 @@ export default function NotesClient() {
 
   if (isLoading) return <p>Loading, please wait...</p>;
   if (error) throw error as Error;
-  if (!data) return <p>Something went wrong.</p>;
+  if (!data || !data.notes) return <p>No data received.</p>;
+
 
   return (
     <>
-      <button onClick={() => setIsModalOpen(true)}>Add new note</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h2>My Notes</h2>
+        <button onClick={() => setIsModalOpen(true)}>Add new note</button>
+      </div>
       <SearchBox value={search} onSearch={(value) => setSearch(value)} />
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
